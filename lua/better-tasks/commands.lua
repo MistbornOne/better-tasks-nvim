@@ -12,6 +12,9 @@ function M.setup_keymaps()
 		core.set_status_prompt,
 		{ desc = "Pick New Status (pop-up)", nowait = true, silent = true }
 	)
+	vim.keymap.set("n", "<leader>tm", core.view_master_popup, { desc = "Master Task Popup" })
+	vim.keymap.set("n", "<leader>ta", core.view_archive_popup, { desc = "Archive Popup" })
+	vim.keymap.set("n", "<leader>ts", core.sync_today_tasks, { desc = "Sync Tasks" })
 
 	-- Commands
 
