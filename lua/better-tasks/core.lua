@@ -271,4 +271,43 @@ function M.sync_today_tasks()
 	)
 end
 
+-- Open Master Tasks in Floating Buffer Window
+function M.open_markdown_popup(filepath, title)
+	local buf = vim.fn.bufnr(filepath, true)
+	vim.fn.bufload(buf)
+
+	local win_width = math.floor(vim.o.columns * 0.7)
+	local win_height = math.floor(vim.o.lines * 0.6)
+	local row = math.floor((vim.o.lines - win_height) / 2)
+	local col = math.floor((vim.o.columns - win_width) / 2)
+
+	local win_opts = {
+		relative = "editor",
+		row = row,
+		col = col,
+		width = win_width,
+		height = win_height,
+		style = "minimal",
+		border = "rounded",
+	}
+
+	local win = vim.api.nvim_open_win(buf, true, win_opts)
+	vim.wo[win].cursorline = true
+	vim.bo[buf].modifiable = false
+	vim.bo[buf].bufhidden = "wipe"
+	vim.bo[buf].filetype = "markdown"
+
+	-- Optional: enable yanking
+	vim.keymap.set("n", "y", '"*yy', { buffer = buf, desc = "Yank line to clipboard" })
+end
+
+function M.view_master_popup()
+	local path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	M.open_markdown_popup(path, "Master Tasks")
+end
+function M.view_archive_popup()
+	local path = vim.fn.stdpath("data") .. "/better-tasks/task_archive.md"
+	M.open_markdown_popup(path, "Task Archive")
+end
+
 return M
