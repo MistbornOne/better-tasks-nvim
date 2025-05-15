@@ -1,5 +1,6 @@
 local M = {}
 local opts = require("better-tasks").options
+local storage = require("better-tasks.storage")
 
 -- Status Emoji Mapping
 local status_emojis = {
@@ -19,14 +20,10 @@ function M.insert_task()
 
 		local today = os.date("%m-%d-%Y")
 		vim.ui.input({ prompt = "Due Date (MM-DD-YYYY):", default = today }, function(due_date)
-			if due_date == nil then
-				return
-			end
-			if due_date == "" then
+			if due_date == nil or due_date == "" then
 				due_date = today
 			end
 
-			local storage = require("better-tasks.storage")
 			local categories = vim.deepcopy(opts.categories or {})
 			table.insert(categories, "Manual Entry")
 
@@ -40,23 +37,70 @@ function M.insert_task()
 						return
 					end
 
-					local statuses = { "TODO", "In Progress", "Stalled", "Cancel", "Done" }
+					-- Merge saved + default statuses
+					local saved_status_map = storage.load_statuses() or {}
+					local saved_statuses = vim.tbl_keys(saved_status_map)
+					local statuses = vim.deepcopy(opts.statuses or {})
+					for _, s in ipairs(saved_statuses) do
+						if not vim.tbl_contains(statuses, s) then
+							table.insert(statuses, s)
+						end
+					end
+					table.insert(statuses, "Custom Status")
 
 					vim.ui.select(statuses, {
-						prompt = "Select status:",
+						prompt = "Select Status:",
 						format_item = function(item)
-							return string.format("%s %s", status_emojis[item] or "🔄", item)
+							return string.format("%s %s", status_emojis[item] or saved_status_map[item] or "🔄", item)
 						end,
 					}, function(status)
 						if not status then
 							return
 						end
 
-						local emoji = status_emojis[status] or "🔄"
-						local date_str = "📅 " .. due_date .. " "
-						local line =
-							string.format("- [ ] %s %s🏷️ %s %s %s", task, date_str, final_category, emoji, status)
-						vim.api.nvim_put({ line }, "l", true, true)
+						local function finalize_status(s, emoji)
+							if not s or s == "" then
+								return
+							end
+							local final_emoji = emoji or status_emojis[s] or saved_status_map[s] or "🔄"
+							local date_str = "📅 " .. due_date .. " "
+							local line = string.format(
+								"- [ ] %s %s🏷️ %s %s %s",
+								task,
+								date_str,
+								final_category,
+								final_emoji,
+								s
+							)
+							vim.api.nvim_put({ line }, "l", true, true)
+						end
+
+						if status == "Custom Status" then
+							vim.ui.input({ prompt = "Enter Custom Status:" }, function(manual_status)
+								if not manual_status or manual_status == "" then
+									return
+								end
+
+								vim.ui.input({
+									prompt = string.format(
+										'Choose emoji for "%s" (e.g. ⏳, 🧠, 🚧):',
+										manual_status
+									),
+								}, function(emoji)
+									if not emoji or emoji == "" then
+										emoji = "🔄"
+									end
+
+									local current = storage.load_statuses() or {}
+									current[manual_status] = emoji
+									storage.save_statuses(current)
+
+									finalize_status(manual_status, emoji)
+								end)
+							end)
+						else
+							finalize_status(status)
+						end
 					end)
 				end
 
@@ -66,10 +110,10 @@ function M.insert_task()
 							return
 						end
 
-						local current = storage.load() or {}
+						local current = storage.load_categories() or {}
 						if not vim.tbl_contains(current, manual_category) then
 							table.insert(current, manual_category)
-							storage.save(current)
+							storage.save_categories(current)
 						end
 
 						continue_with_category(manual_category)

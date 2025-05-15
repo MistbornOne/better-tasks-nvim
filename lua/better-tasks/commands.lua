@@ -12,6 +12,8 @@ function M.setup_keymaps()
 		core.set_status_prompt,
 		{ desc = "Pick New Status (pop-up)", nowait = true, silent = true }
 	)
+	--vim.api.nvim_create_user_command("BetterTasksToday", core.show_today_tasks, {})
+	--vim.api.nvim_create_user_command("BetterTasksEditCategories", core.edit_categories, {})
 end
 
 return M
