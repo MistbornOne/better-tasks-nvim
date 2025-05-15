@@ -12,8 +12,18 @@ function M.setup_keymaps()
 		core.set_status_prompt,
 		{ desc = "Pick New Status (pop-up)", nowait = true, silent = true }
 	)
+
+	-- Commands
 	vim.api.nvim_create_user_command("BetterTasksEditCategories", core.edit_categories, {})
 	vim.api.nvim_create_user_command("BetterTasksEditStatuses", core.edit_statuses, {})
+	vim.api.nvim_create_user_command("BTSync", core.sync_today_tasks, {})
+	vim.api.nvim_create_user_command("BTViewMaster", function()
+		vim.cmd("edit " .. vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md")
+	end, {})
+
+	vim.api.nvim_create_user_command("BTViewArchive", function()
+		vim.cmd("edit " .. vim.fn.stdpath("data") .. "/better-tasks/task_archive.md")
+	end, {})
 end
 
 return M

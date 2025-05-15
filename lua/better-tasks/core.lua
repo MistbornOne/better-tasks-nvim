@@ -223,4 +223,52 @@ function M.edit_statuses()
 	local path = vim.fn.stdpath("config") .. "/better-tasks/statuses.json"
 	open_file_popup(path, "Statuses")
 end
+
+-- Sync Daily Tasks To Archive or Master List
+function M.sync_today_tasks()
+	local buf = vim.api.nvim_get_current_buf()
+	local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+
+	local open_tasks, done_tasks = {}, {}
+
+	for _, line in ipairs(lines) do
+		local is_done = line:match("%[x%]")
+		local is_open = line:match("%[ ?%]") and not is_done
+
+		if is_done or is_open then
+			-- Parse fields from your format
+			local name = line:match("%- %[[x ]%] (.-) | 📅")
+			local due_date = line:match("📅 ([^|]+)")
+			local category = line:match("🏷️ ([^|]+)")
+			local status_emoji = line:match("| ([^\n|]+)$")
+
+			local task = {
+				raw = line,
+				name = vim.trim(name or ""),
+				due_date = vim.trim(due_date or os.date("%m-%d-%Y")),
+				category = vim.trim(category or "General"),
+				emoji = vim.trim(status_emoji or ""),
+			}
+
+			if is_done then
+				table.insert(done_tasks, task)
+			elseif is_open then
+				table.insert(open_tasks, task)
+			end
+		end
+	end
+
+	-- Markdown header
+	local short_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":~:.")
+	local header = os.date("%Y-%m-%d") .. " — Synced from " .. short_path
+
+	storage.append_open_tasks(header, open_tasks)
+	storage.append_done_tasks(header, done_tasks)
+
+	vim.notify(
+		"📥 Synced " .. #open_tasks .. " open and " .. #done_tasks .. " done tasks to markdown archives.",
+		vim.log.levels.INFO
+	)
+end
+
 return M
