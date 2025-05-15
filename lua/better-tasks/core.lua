@@ -175,4 +175,51 @@ function M.mark_done()
 	vim.api.nvim_buf_set_lines(0, row - 1, row, false, { updated })
 end
 
+-- Open window in buffer  for editing categories and statuses
+local function open_file_popup(filepath, title)
+	local buf = vim.fn.bufnr(filepath, true)
+	vim.fn.bufload(buf)
+
+	-- Avoid duplicate window
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		if vim.api.nvim_win_get_buf(win) == buf then
+			vim.api.nvim_set_current_win(win)
+			return
+		end
+	end
+
+	-- Create floating window
+	local win_width = math.floor(vim.o.columns * 0.5)
+	local win_height = math.floor(vim.o.lines * 0.4)
+	local row = math.floor((vim.o.lines - win_height) / 2)
+	local col = math.floor((vim.o.columns - win_width) / 2)
+
+	local win_opts = {
+		relative = "editor",
+		row = row,
+		col = col,
+		width = win_width,
+		height = win_height,
+		style = "minimal",
+		border = "rounded",
+	}
+
+	local win = vim.api.nvim_open_win(buf, true, win_opts)
+	vim.wo[win].cursorline = true
+	vim.bo[buf].bufhidden = "wipe"
+
+	vim.cmd("edit " .. vim.fn.fnameescape(filepath))
+end
+
+-- Edit Categories in .json file
+function M.edit_categories()
+	local path = vim.fn.stdpath("config") .. "/better-tasks/categories.json"
+	open_file_popup(path, "Categories")
+end
+
+--Edit Statuses in .json file
+function M.edit_statuses()
+	local path = vim.fn.stdpath("config") .. "/better-tasks/statuses.json"
+	open_file_popup(path, "Statuses")
+end
 return M
