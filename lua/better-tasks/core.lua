@@ -26,6 +26,7 @@ function M.insert_task()
 				due_date = today
 			end
 
+			local storage = require("better-tasks.storage")
 			local categories = vim.deepcopy(opts.categories or {})
 			table.insert(categories, "Manual Entry")
 
@@ -64,6 +65,13 @@ function M.insert_task()
 						if not manual_category or manual_category == "" then
 							return
 						end
+
+						local current = storage.load() or {}
+						if not vim.tbl_contains(current, manual_category) then
+							table.insert(current, manual_category)
+							storage.save(current)
+						end
+
 						continue_with_category(manual_category)
 					end)
 				else
