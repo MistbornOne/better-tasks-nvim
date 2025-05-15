@@ -171,7 +171,7 @@ function M.mark_done()
 
 	local updated = line
 		:gsub("%- %[ %]", "- [x]") -- check the task box
-		:gsub("[%z\1-\127\194-\244][\128-\191]* %a[%a%s]+$", " ✅ Done") -- set status
+		:gsub("|%s*[%z\1-\127\194-\244][\128-\191]*%s+[^|]+$", "| ✅ Done")
 
 	vim.api.nvim_buf_set_lines(0, row - 1, row, false, { updated })
 end
