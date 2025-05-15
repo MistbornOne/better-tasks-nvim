@@ -65,7 +65,7 @@ function M.insert_task()
 							local final_emoji = emoji or status_emojis[s] or saved_status_map[s] or "🔄"
 							local date_str = "📅 " .. due_date .. " "
 							local line = string.format(
-								"- [ ] %s %s🏷️ %s %s %s",
+								"- [ ] %s | %s | 🏷️ %s | %s  %s",
 								task,
 								date_str,
 								final_category,
@@ -83,7 +83,7 @@ function M.insert_task()
 
 								vim.ui.input({
 									prompt = string.format(
-										'Choose emoji for "%s" (e.g. ⏳, 🧠, 🚧):',
+										'Paste emoji for "%s" (e.g. ⏳, 🧠, 🚧):',
 										manual_status
 									),
 								}, function(emoji)
@@ -153,7 +153,8 @@ function M.set_status_prompt()
 		end
 
 		-- Pattern: Match " <emoji> <status>" at end of line
-		local updated = line:gsub(" [%z\1-\127\194-\244][\128-\191]* %a[%a%s]+$", " " .. emoji .. " " .. choice)
+
+		local updated = line:gsub("(|%s*[%z\1-\127\194-\244][\128-\191]*%s+)[^|]+$", "| " .. emoji .. " " .. choice)
 
 		if updated ~= line then
 			vim.api.nvim_buf_set_lines(0, row - 1, row, false, { updated })
