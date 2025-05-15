@@ -276,6 +276,14 @@ function M.open_markdown_popup(filepath, title)
 	local buf = vim.fn.bufnr(filepath, true)
 	vim.fn.bufload(buf)
 
+	vim.api.nvim_buf_set_lines(buf, 0, 0, false, {
+		"# " .. title,
+		"Instructions:",
+		"Use normal vim commands to interact",
+		"You can edit or yank tasks as needed",
+		"=======================================",
+	})
+
 	local win_width = math.floor(vim.o.columns * 0.7)
 	local win_height = math.floor(vim.o.lines * 0.6)
 	local row = math.floor((vim.o.lines - win_height) / 2)
@@ -293,7 +301,7 @@ function M.open_markdown_popup(filepath, title)
 
 	local win = vim.api.nvim_open_win(buf, true, win_opts)
 	vim.wo[win].cursorline = true
-	vim.bo[buf].modifiable = false
+	vim.bo[buf].modifiable = true
 	vim.bo[buf].bufhidden = "wipe"
 	vim.bo[buf].filetype = "markdown"
 
