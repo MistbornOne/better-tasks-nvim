@@ -1,7 +1,11 @@
 local core = require("better-tasks.core")
---print(vim.inspect(core))
+local sort = require("better-tasks.sort")
 
 local M = {}
+
+--=============
+-- Keymaps
+--============
 
 function M.setup_keymaps()
 	vim.keymap.set("n", "<leader>tn", core.insert_task, { desc = "Insert New Task" })
@@ -14,16 +18,30 @@ function M.setup_keymaps()
 	)
 	vim.keymap.set("n", "<leader>tm", core.view_master_popup, { desc = "Master Task Popup" })
 	vim.keymap.set("n", "<leader>ta", core.view_archive_popup, { desc = "Archive Popup" })
-	vim.keymap.set("n", "<leader>ts", core.sync_today_tasks, { desc = "Sync Tasks" })
+	vim.keymap.set(
+		"n",
+		"<leader>tw",
+		core.set_due_date_prompt,
+		{ desc = "Pick New Date", nowait = true, silent = true }
+	)
 
+	-- Sorting Keymaps
+	vim.keymap.set("n", "<leader>ss", function()
+		sort.sort_buffer_tasks({ sort_open_by = "status" })
+	end, { desc = "Sort Tasks: Done first, open by Status" })
+	vim.keymap.set("n", "<leader>sd", function()
+		sort.sort_buffer_tasks({ sort_open_by = "date" })
+	end, { desc = "Sort Tasks: Done first, open by Date" })
+
+	--==========
 	-- Commands
+	--==========
 
-	-- Edit Categories and Statuses
+	-- Edit Categories and Statuses and Date
 	vim.api.nvim_create_user_command("BetterTasksEditCategories", core.edit_categories, {})
 	vim.api.nvim_create_user_command("BetterTasksEditStatuses", core.edit_statuses, {})
 
-	-- Sync to Archive and Master
-	vim.api.nvim_create_user_command("BTSync", core.sync_today_tasks, {})
+	vim.api.nvim_create_user_command("BTDate", core.set_due_date_prompt, {})
 
 	-- View Master In Pop Up Buffer Window
 	vim.api.nvim_create_user_command("BTMaster", function()
