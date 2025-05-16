@@ -120,4 +120,4 @@ Feel free to open an issue or PR! Feature requests and bug reports are welcome.
 
 📝 License
 
-MIT © Ian Watkins
+[MIT](https://github.com/MistbornOne/better-tasks.nvim/blob/main/LICENSE) © Ian Watkins
