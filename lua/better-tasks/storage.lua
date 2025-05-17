@@ -25,8 +25,22 @@ local function ensure_file(path, init_content)
 	end
 end
 
-ensure_file(master_file, "# Open Tasks\n\n")
-ensure_file(archive_file, "# Archived Tasks\n\n")
+ensure_file(
+	master_file,
+	[[
+# Open Tasks
+Use normal vim commands to interact
+=======================================
+]]
+)
+ensure_file(
+	master_file,
+	[[
+# Archived Tasks
+Use normal vim commands to interact
+=======================================
+]]
+)
 
 -- Categories
 
