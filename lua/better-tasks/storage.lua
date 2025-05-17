@@ -25,6 +25,9 @@ local function ensure_file(path, init_content)
 	end
 end
 
+ensure_file(master_file, "# Open Tasks\n\n")
+ensure_file(archive_file, "# Archived Tasks\n\n")
+
 -- Categories
 
 function M.load_categories()
