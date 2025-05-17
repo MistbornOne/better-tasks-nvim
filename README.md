@@ -1,6 +1,6 @@
 # Better Tasks
 
-**Better Tasks** is a lightweight, opinionated Neovim plugin for managing Markdown-based task lists across your notes, journals, or project files. It adds intuitive task management commands, persistent storage, status highlighting, and upcoming fuzzy-finding and popup UIs.
+**Better Tasks** is a lightweight, modular Neovim plugin for managing Markdown-based task lists across your notes, journals, or project files. It adds intuitive task management commands, persistent storage, status highlighting, and upcoming fuzzy-finding and popup UIs.
 
 ## ✨ Features
 
@@ -20,6 +20,7 @@
 Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
+return
 {
   "MistbornOne/better-tasks.nvim",
   config = function()
@@ -37,6 +38,7 @@ use({
     require("better-tasks").setup()
   end,
 })
+
 ```
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
@@ -49,7 +51,7 @@ Plug 'MistbornOne/better-tasks.nvim'
 Then in your Lua config (after plugins are loaded):
 
 ```lua
-require("better-tasks.nvim").setup()
+require("better-tasks").setup()
 
 ```
 
@@ -58,12 +60,12 @@ require("better-tasks.nvim").setup()
 ## ⚙️ Configuration
 
 ```lua
-require("better-tasks.nvim").setup({
+require("better-tasks").setup({
   master_task_file = "~/Tasks/Master.md",
   archive_file = "~/Tasks/Archive.md",
   options = {
     show_notifications = true,
-    categories = { "Work", "MVP", "Call Center" },
+    categories = { "Life", "Work", "Coding" },
     statuses = {
       ["TODO"] = "🆕",
       ["In Progress"] = "🌱",

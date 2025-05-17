@@ -2,10 +2,14 @@ local M = {}
 
 -- Paths
 local config_dir = vim.fn.stdpath("config") .. "/better-tasks"
+vim.fn.mkdir(config_dir, "p")
+
 local categories_path = config_dir .. "/categories.json"
 local statuses_path = config_dir .. "/statuses.json"
 
 local data_dir = vim.fn.stdpath("data") .. "/better-tasks"
+vim.fn.mkdir(data_dir, "p")
+
 local master_file = data_dir .. "/master_tasks.md"
 local archive_file = data_dir .. "/task_archive.md"
 
