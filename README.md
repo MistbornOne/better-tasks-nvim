@@ -11,6 +11,7 @@
 - 🧠 Virtual text highlighting for status, category, and due date
 - 📅 Popup prompt to edit status and due date inline
 - 📁 Archive completed tasks by date and source automatically
+- 📝 Format tasks like a table view in current buffer
 - 🔍 Telescope and FZF integration (on roadmap)
 
 ---
@@ -83,16 +84,17 @@ require("better-tasks").setup({
 
 **Keymaps (Defaults)**
 
-| Mapping      | Action                    |
-| ------------ | ------------------------- |
-| `<leader>tn` | Insert new task           |
-| `<leader>td` | Mark current task as done |
-| `<leader>tt` | Change status via popup   |
-| `<leader>tw` | Change due date via popup |
-| `<leader>ss` | Sort open tasks by status |
-| `<leader>sd` | Sort open tasks by date   |
-| `<leader>tm` | View Master List (Popup)  |
-| `<leader>ta` | View Archive List (Popup) |
+| Mapping       | Action                    |
+| ------------- | ------------------------- |
+| `<leader>tn`  | Insert new task           |
+| `<leader>td`  | Mark current task as done |
+| `<leader>tt`  | Change status via popup   |
+| `<leader>tw`  | Change due date via popup |
+| `<leader>ss`  | Sort open tasks by status |
+| `<leader>sd`  | Sort open tasks by date   |
+| `<leader>tm`  | View Master List (Popup)  |
+| `<leader>ta`  | View Archive List (Popup) |
+| `<leader>fmt` | Format As Table in Buffer |
 
 ---
 
