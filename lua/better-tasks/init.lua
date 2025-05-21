@@ -5,10 +5,20 @@ local storage = require("better-tasks.storage")
 M.options = {
 	categories = { "Coding", "Notes", "Life", "Work" },
 	statuses = { "TODO", "In Progress", "Stalled", "Cancel", "Done" },
+	master_file = nil,
+	archive_file = nil,
 }
 
 function M.setup(opts)
 	opts = opts or {}
+
+	if opts.master_file then
+		M.options.master_file = opts.master_file
+	end
+
+	if opts.archive_file then
+		M.options.archive_file = opts.archive_file
+	end
 
 	-- Categories
 	local saved_categories = storage.load_categories() or {}

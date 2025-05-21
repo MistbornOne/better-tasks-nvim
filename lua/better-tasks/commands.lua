@@ -1,5 +1,6 @@
 local core = require("better-tasks.core")
 local sort = require("better-tasks.sort")
+local formatter = require("better-tasks.format")
 
 local M = {}
 
@@ -33,13 +34,17 @@ function M.setup_keymaps()
 		sort.sort_buffer_tasks({ sort_open_by = "date" })
 	end, { desc = "Sort Tasks: Done first, open by Date" })
 
+	-- Format Keymap
+	vim.keymap.set("n", "<leader>fmt", formatter.format_all_tasks, { desc = "Format All Tasks" })
+	vim.keymap.set("n", "<leader>fms", formatter.show_full_task_under_cursor, { desc = "Show full task under cursor" })
+
 	--==========
 	-- Commands
 	--==========
 
 	-- Edit Categories and Statuses and Date
-	vim.api.nvim_create_user_command("BetterTasksEditCategories", core.edit_categories, {})
-	vim.api.nvim_create_user_command("BetterTasksEditStatuses", core.edit_statuses, {})
+	vim.api.nvim_create_user_command("BTEditCategories", core.edit_categories, {})
+	vim.api.nvim_create_user_command("BTEditStatuses", core.edit_statuses, {})
 
 	vim.api.nvim_create_user_command("BTDate", core.set_due_date_prompt, {})
 
@@ -63,6 +68,11 @@ function M.setup_keymaps()
 	-- Go to Archive in current buffer
 	vim.api.nvim_create_user_command("BTViewArchive", function()
 		vim.cmd("edit " .. vim.fn.stdpath("data") .. "/better-tasks/task_archive.md")
+	end, {})
+
+	-- Format Tasks in Buffer
+	vim.api.nvim_create_user_command("BTFormat", function()
+		formatter.format_all_tasks()
 	end, {})
 end
 
