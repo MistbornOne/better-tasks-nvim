@@ -35,11 +35,23 @@ local function ensure_header_exists(filepath, header)
 	return lines
 end
 
+-- Master Path
+local function get_master_path()
+	return opts.master_file or (vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md")
+end
+
+-- Archive Path
+local function get_archive_path()
+	return opts.archive_file or (vim.fn.stdpath("data") .. "/better-tasks/task_archive.md")
+end
+
 -- Helper: Write new task line to master
 local function append_to_master(task_line)
 	local short_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":~:.")
 	local header = os.date("%Y-%m-%d") .. " — Inserted from " .. short_path
-	local path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	--local path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	local path = get_master_path()
+
 	local lines = ensure_header_exists(path, header)
 	table.insert(lines, task_line)
 	vim.fn.writefile(lines, path)
@@ -49,13 +61,15 @@ end
 local function archive_and_remove_from_master(task_line, task_name)
 	local short_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":~:.")
 	local header = os.date("%Y-%m-%d") .. " — Marked Done from " .. short_path
-	local archive_path = vim.fn.stdpath("data") .. "/better-tasks/task_archive.md"
+	--local archive_path = vim.fn.stdpath("data") .. "/better-tasks/task_archive.md"
+	local archive_path = get_archive_path()
 	local archive_lines = ensure_header_exists(archive_path, header)
 	table.insert(archive_lines, task_line)
 	vim.fn.writefile(archive_lines, archive_path)
 
 	-- Remove from master
-	local master_path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	--local master_path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	local master_path = opts.master_file or (vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md")
 	local master_lines = vim.fn.readfile(master_path)
 	local filtered = {}
 	for _, l in ipairs(master_lines) do
@@ -238,7 +252,9 @@ function M.mark_done()
 	-- Append to archive file
 	local short_path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":~:.")
 	local header = os.date("%Y-%m-%d") .. " — " .. HEADER_PREFIX_DONE .. " " .. short_path
-	local archive_path = vim.fn.stdpath("data") .. "/better-tasks/task_archive.md"
+	--local archive_path = vim.fn.stdpath("data") .. "/better-tasks/task_archive.md"
+	local archive_path = get_archive_path()
+
 	local archive_lines = vim.fn.readfile(archive_path)
 	local full_header = "## " .. header
 	local header_exists = false
@@ -258,7 +274,8 @@ function M.mark_done()
 	vim.fn.writefile(archive_lines, archive_path)
 
 	-- Remove from master file
-	local master_path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	--local master_path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	local master_path = get_master_path()
 	local master_lines = vim.fn.readfile(master_path)
 	local filtered = {}
 
@@ -434,12 +451,14 @@ end
 --=======================================
 --  Master & Archive Popup Windows
 --=======================================
+
 function M.view_master_popup()
-	local path = vim.fn.stdpath("data") .. "/better-tasks/master_tasks.md"
+	local path = get_master_path()
 	M.open_markdown_popup(path, "Master Tasks")
 end
+
 function M.view_archive_popup()
-	local path = vim.fn.stdpath("data") .. "/better-tasks/task_archive.md"
+	local path = get_archive_path()
 	M.open_markdown_popup(path, "Task Archive")
 end
 

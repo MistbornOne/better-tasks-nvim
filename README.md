@@ -62,8 +62,9 @@ require("better-tasks").setup()
 
 ```lua
 require("better-tasks").setup({
-  master_task_file = "~/Tasks/Master.md",
-  archive_file = "~/Tasks/Archive.md",
+  master_task_file = "~/Tasks/Master.md", -- replace with your path
+  archive_file = "~/Tasks/Archive.md", -- replace with your path
+
   options = {
     show_notifications = true,
     categories = { "Life", "Work", "Coding" },
